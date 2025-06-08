@@ -22,15 +22,11 @@ async function fetchTVShowData(channelId) {
         // Extract show details
         const showImage = firstShow.find('img').attr('src');
         const showName = firstShow.find('a').first().text().trim();
-        const showDescription = firstShow.find('ul.unstyled.no-margin li').last().text().trim();
-        const showLink = firstShow.find('a').first().attr('href');
 
         return {
             channelId,
             showImage,
-            showName,
-            showDescription,
-            showLink
+            showName
         };
     } catch (error) {
         console.error(`Error fetching data for channel ${channelId}:`, error.message);
