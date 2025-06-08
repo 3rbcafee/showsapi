@@ -29,6 +29,11 @@
 
                 const data = await response.json();
                 console.log('Received data:', data);
+                
+                if (!data.shows || !Array.isArray(data.shows)) {
+                    throw new Error('Invalid response format');
+                }
+                
                 return data.shows;
             } catch (error) {
                 console.error('Error fetching shows:', error);
@@ -48,6 +53,7 @@
             
             // Check if we have the required data
             if (!show.showImage || !show.showName) {
+                console.warn('Missing show data:', show);
                 return `
                     <div class="show-item show-error">
                         <div class="show-content">
