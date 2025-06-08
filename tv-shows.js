@@ -1,9 +1,9 @@
 (function() {
     class TVShowsFetcher {
         constructor(options = {}) {
-            this.apiUrl = options.apiUrl || 'https://showsapi-3rbcafees-projects.vercel.app/api/shows';
+            this.apiUrl = options.apiUrl || 'https://showsapi.vercel.app/api/shows';
             this.containerId = options.containerId || 'tv-shows-container';
-            this.channelIds = options.channelIds || [];
+            this.channelIds = options.channelIds || ['1292', '1264', '1203', '1340'];
         }
 
         async fetchShows() {
@@ -32,17 +32,15 @@
 
         renderShow(show) {
             if (show.error) {
-                return `<div style="color: red; padding: 10px; border: 1px solid red; margin: 10px 0;">${show.error}</div>`;
+                return `<div>${show.error}</div>`;
             }
             return `
-                <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; display: flex; gap: 20px;">
-                    <img src="${show.showImage}" alt="${show.showName}" style="width: 150px; height: 200px; object-fit: cover;">
-                    <div style="flex: 1;">
-                        <h2><a href="${show.showLink}" target="_blank">${show.showName}</a></h2>
-                        <p>${show.showDescription}</p>
-                        <p><strong>Channel ID:</strong> ${show.channelId}</p>
+                <a href="#${show.channelId}">
+                    <div>
+                        <img src="${show.showImage}" alt="${show.showName}">
+                        <h2>${show.showName}</h2>
                     </div>
-                </div>
+                </a>
             `;
         }
 
