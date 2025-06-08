@@ -16,25 +16,43 @@ async function fetchTVShowData(channelId) {
                 'Upgrade-Insecure-Requests': '1'
             }
         });
-        const $ = cheerio.load(response.data);
 
-        // Find the first show in the list
-        const firstShow = $('.row').first();
-        console.log('First show element found:', firstShow.length > 0);
+        // Log the response status and content type
+        console.log('Response status:', response.status);
+        console.log('Content type:', response.headers['content-type']);
+
+        const $ = cheerio.load(response.data);
         
-        // Extract show details with more specific selectors
+        // Find all show rows
+        const showRows = $('.row');
+        console.log('Number of show rows found:', showRows.length);
+
+        // Get the first show
+        const firstShow = showRows.first();
+        
+        // Extract show details using the exact structure from the example
         const showImage = firstShow.find('.columns.small-3.large-1 a img').attr('src');
         const showName = firstShow.find('.columns.small-6.large-3 ul.unstyled.no-margin li a').first().text().trim();
         
-        console.log('Raw HTML:', firstShow.html());
-        console.log('Extracted data:', { channelId, showImage, showName });
+        // Log the raw HTML for debugging
+        console.log('First show HTML:', firstShow.html());
+        console.log('Show image URL:', showImage);
+        console.log('Show name:', showName);
 
+        // If we couldn't find the data, try alternative selectors
         if (!showImage || !showName) {
-            console.error('Failed to extract show data:', {
-                showImageFound: !!showImage,
-                showNameFound: !!showName,
-                html: firstShow.html()
-            });
+            console.log('Trying alternative selectors...');
+            const altShowImage = firstShow.find('img').first().attr('src');
+            const altShowName = firstShow.find('a').first().text().trim();
+            
+            console.log('Alternative image URL:', altShowImage);
+            console.log('Alternative show name:', altShowName);
+
+            return {
+                channelId,
+                showImage: altShowImage || showImage,
+                showName: altShowName || showName
+            };
         }
 
         return {
@@ -44,6 +62,10 @@ async function fetchTVShowData(channelId) {
         };
     } catch (error) {
         console.error(`Error fetching data for channel ${channelId}:`, error.message);
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+        }
         return {
             channelId,
             error: 'Failed to fetch show data'
