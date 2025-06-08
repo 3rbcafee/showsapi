@@ -36,21 +36,30 @@ class TVShowsFetcher {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
+                mode: 'cors',
+                credentials: 'omit',
                 body: JSON.stringify({ channelIds: this.channelIds })
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
             const data = await response.json();
             return data.shows;
         } catch (error) {
             console.error('Error fetching shows:', error);
-            return [];
+            return [{
+                error: `Failed to fetch shows: ${error.message}. Please check if the API is accessible and CORS is properly configured.`
+            }];
         }
     }
 
     renderShow(show) {
         if (show.error) {
-            return `<div class="tv-show-error">Error fetching channel ${show.channelId}: ${show.error}</div>`;
+            return `<div class="tv-show-error">${show.error}</div>`;
         }
         return `
             <div class="tv-show-card">
@@ -76,6 +85,9 @@ class TVShowsFetcher {
             console.error(`Container with ID "${this.containerId}" not found`);
             return;
         }
+
+        // Show loading state
+        container.innerHTML = '<div>Loading shows...</div>';
 
         // Fetch and render shows
         const shows = await this.fetchShows();
