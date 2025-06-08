@@ -1,9 +1,9 @@
 {
     "version": 2,
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/shows",
-            "dest": "/shows.js"
+            "source": "/api/shows",
+            "destination": "/shows.js"
         }
     ]
 } 

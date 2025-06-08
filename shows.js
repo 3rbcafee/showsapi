@@ -41,7 +41,8 @@ async function fetchTVShowData(channelId) {
     }
 }
 
-module.exports = async (req, res) => {
+// Vercel serverless function handler
+export default async function handler(req, res) {
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -70,4 +71,4 @@ module.exports = async (req, res) => {
     } else {
         res.status(405).json({ error: 'Method not allowed' });
     }
-}; 
+} 
