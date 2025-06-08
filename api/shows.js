@@ -5,6 +5,8 @@ const cheerio = require('cheerio');
 async function fetchTVShowData(channelId) {
     try {
         const url = `https://elcinema.com/tvguide/${channelId}/`;
+        console.log(`Fetching from URL: ${url}`);
+        
         const response = await axios.get(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -18,10 +20,13 @@ async function fetchTVShowData(channelId) {
 
         // Find the first show in the list
         const firstShow = $('.boxed-category-3').first();
+        console.log('First show element found:', firstShow.length > 0);
         
         // Extract show details
         const showImage = firstShow.find('img').attr('src');
         const showName = firstShow.find('a').first().text().trim();
+        
+        console.log('Extracted data:', { channelId, showImage, showName });
 
         return {
             channelId,
@@ -54,14 +59,17 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
         try {
             const { channelIds } = req.body;
+            console.log('Received channelIds:', channelIds);
             
             if (!Array.isArray(channelIds)) {
                 return res.status(400).json({ error: 'channelIds must be an array' });
             }
 
             const shows = await Promise.all(channelIds.map(id => fetchTVShowData(id)));
+            console.log('Sending response:', { shows });
             res.json({ shows });
         } catch (error) {
+            console.error('Server error:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     } else {
