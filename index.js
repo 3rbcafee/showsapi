@@ -6,21 +6,18 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configure CORS with specific options
-const corsOptions = {
-    origin: '*', // Allow all origins
-    methods: ['GET', 'POST', 'OPTIONS'], // Allow these methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
-    credentials: true, // Allow credentials
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-};
-
-// Apply CORS middleware with options
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Enable CORS for all routes
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    next();
+});
 
 app.use(express.json());
 app.use(express.static('./')); // Serve static files from root directory
@@ -58,7 +55,7 @@ async function fetchTVShowData(channelId) {
 }
 
 // API endpoint to fetch shows for multiple channels
-app.post('/api/shows', cors(corsOptions), async (req, res) => {
+app.post('/api/shows', async (req, res) => {
     try {
         const { channelIds } = req.body;
         
@@ -69,11 +66,6 @@ app.post('/api/shows', cors(corsOptions), async (req, res) => {
         const showPromises = channelIds.map(id => fetchTVShowData(id));
         const shows = await Promise.all(showPromises);
 
-        // Set CORS headers explicitly for this response
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        
         res.json({ shows });
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });

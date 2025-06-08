@@ -35,11 +35,9 @@ class TVShowsFetcher {
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 mode: 'cors',
-                credentials: 'omit',
                 body: JSON.stringify({ channelIds: this.channelIds })
             });
 
@@ -52,7 +50,7 @@ class TVShowsFetcher {
         } catch (error) {
             console.error('Error fetching shows:', error);
             return [{
-                error: `Failed to fetch shows: ${error.message}. Please check if the API is accessible and CORS is properly configured.`
+                error: `Failed to fetch shows: ${error.message}. Please check if the API is accessible.`
             }];
         }
     }
