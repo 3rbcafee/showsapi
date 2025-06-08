@@ -46,11 +46,25 @@
             const channelName = this.channelNames[show.channelId] || show.channelId;
             console.log('Rendering show:', { ...show, channelName });
             
+            // Check if we have the required data
+            if (!show.showImage || !show.showName) {
+                return `
+                    <div class="show-item show-error">
+                        <div class="show-content">
+                            <div class="show-info">
+                                <h2 class="show-title">No show data available</h2>
+                                <p class="channel-name">${channelName}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
             return `
                 <div class="show-item">
                     <a href="#${show.channelId}" class="show-link">
                         <div class="show-content">
-                            <img src="${show.showImage}" alt="${show.showName}" class="show-image">
+                            <img src="${show.showImage}" alt="${show.showName}" class="show-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x200?text=No+Image'">
                             <div class="show-info">
                                 <h2 class="show-title">${show.showName}</h2>
                                 <p class="channel-name">${channelName}</p>
