@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TV Shows Test</title>
+    <style>
+        .show-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            gap: 20px;
+        }
+        .show-image {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+        }
+        .show-info {
+            flex: 1;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>TV Shows Test</h1>
+    <div id="shows-container"></div>
+
+    <script>
+        // Replace this with your actual Vercel deployment URL
+        const API_URL = 'https://your-project-url.vercel.app/api/shows';
+        
+        async function fetchShows() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        channelIds: ['1292', '1293', '1294'] // Add your channel IDs here
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.shows;
+            } catch (error) {
+                console.error('Error:', error);
+                return [{
+                    error: `Failed to fetch shows: ${error.message}`
+                }];
+            }
+        }
+
+        function renderShow(show) {
+            if (show.error) {
+                return `<div class="error">${show.error}</div>`;
+            }
+            return `
+                <div class="show-card">
+                    <img src="${show.showImage}" alt="${show.showName}" class="show-image">
+                    <div class="show-info">
+                        <h2><a href="${show.showLink}" target="_blank">${show.showName}</a></h2>
+                        <p>${show.showDescription}</p>
+                        <p><strong>Channel ID:</strong> ${show.channelId}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function displayShows() {
+            const container = document.getElementById('shows-container');
+            container.innerHTML = '<div>Loading shows...</div>';
+            
+            const shows = await fetchShows();
+            container.innerHTML = shows.map(show => renderShow(show)).join('');
+        }
+
+        // Load shows when the page loads
+        displayShows();
+    </script>
+</body>
+</html> 
