@@ -19,12 +19,12 @@ async function fetchTVShowData(channelId) {
         const $ = cheerio.load(response.data);
 
         // Find the first show in the list
-        const firstShow = $('.boxed-category-3').first();
+        const firstShow = $('.row').first();
         console.log('First show element found:', firstShow.length > 0);
         
         // Extract show details
-        const showImage = firstShow.find('img').attr('src');
-        const showName = firstShow.find('a').first().text().trim();
+        const showImage = firstShow.find('.columns.small-3.large-1 img').attr('src');
+        const showName = firstShow.find('.columns.small-6.large-3 a').first().text().trim();
         
         console.log('Extracted data:', { channelId, showImage, showName });
 
