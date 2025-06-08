@@ -32,12 +32,12 @@ class TVShowsFetcher {
 
     async fetchShows() {
         try {
+            console.log('Fetching shows from:', this.apiUrl);
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                mode: 'cors',
                 body: JSON.stringify({ channelIds: this.channelIds })
             });
 
