@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('./')); // Serve static files from root directory
 
 // Function to fetch and parse TV show data
 async function fetchTVShowData(channelId) {
@@ -62,7 +62,7 @@ app.post('/api/shows', async (req, res) => {
 
 // Serve the main HTML page
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 app.listen(port, () => {
