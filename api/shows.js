@@ -22,11 +22,20 @@ async function fetchTVShowData(channelId) {
         const firstShow = $('.row').first();
         console.log('First show element found:', firstShow.length > 0);
         
-        // Extract show details
-        const showImage = firstShow.find('.columns.small-3.large-1 img').attr('src');
-        const showName = firstShow.find('.columns.small-6.large-3 a').first().text().trim();
+        // Extract show details with more specific selectors
+        const showImage = firstShow.find('.columns.small-3.large-1 a img').attr('src');
+        const showName = firstShow.find('.columns.small-6.large-3 ul.unstyled.no-margin li a').first().text().trim();
         
+        console.log('Raw HTML:', firstShow.html());
         console.log('Extracted data:', { channelId, showImage, showName });
+
+        if (!showImage || !showName) {
+            console.error('Failed to extract show data:', {
+                showImageFound: !!showImage,
+                showNameFound: !!showName,
+                html: firstShow.html()
+            });
+        }
 
         return {
             channelId,
